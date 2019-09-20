@@ -58,7 +58,7 @@ namespace Kaparasz.Web
             services.AddMvc().AddNewtonsoftJson();
             services.AddControllersWithViews().AddNewtonsoftJson();
 
-            services.AddScoped<Firebase.Auth.IFirebaseAuthProvider, Firebase.Auth.FirebaseAuthProvider>();
+            services.AddSingleton<Firebase.Auth.IFirebaseAuthProvider, Firebase.Auth.FirebaseAuthProvider>();
 
             
         }
