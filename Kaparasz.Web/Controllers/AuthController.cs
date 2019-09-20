@@ -40,11 +40,20 @@ namespace Kaparasz.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginAsync([FromForm]LoginViewModel login)
         {
-            //var auth = await firebaseAuthProvider.SignInWithEmailAndPasswordAsync(login.Email, login.Password);
+            try
+            {
+                var auth = await firebaseAuthProvider.SignInWithEmailAndPasswordAsync(login.Email, login.Password);
 
-            //HttpContext.Session.SetString("JWToken", auth.FirebaseToken);
-            
-            return View(login);
+                // TODO: betenni a tokent, hogy használja
+
+                return RedirectToAction("Home", "Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Email", ex.Message);
+                return View(login);
+            }
+
         }
 
         /*

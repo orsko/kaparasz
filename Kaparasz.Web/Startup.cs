@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.IO;
+using Firebase.Auth;
 
 namespace Kaparasz.Web
 {
@@ -58,7 +59,10 @@ namespace Kaparasz.Web
             services.AddMvc().AddNewtonsoftJson();
             services.AddControllersWithViews().AddNewtonsoftJson();
 
-            services.AddSingleton<Firebase.Auth.IFirebaseAuthProvider, Firebase.Auth.FirebaseAuthProvider>();
+            services.AddScoped<IFirebaseAuthProvider>(s =>
+            {
+                return new FirebaseAuthProvider(new FirebaseConfig("AIzaSyAcyaI48Vo7P3r8thKttsdUYl_bsfpG-g4"));
+            });
 
             
         }
