@@ -30,6 +30,7 @@
     <Folder Include="Views\Home\" />
     <Folder Include="Views\Shared\" />
     <Folder Include="ViewModels\Auth\" />
+    <Folder Include="Middlewares\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Pages\Error.cshtml.cs" />

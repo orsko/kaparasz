@@ -13,6 +13,10 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.IO;
 using Firebase.Auth;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Kaparasz.Web.Middlewares;
 
 namespace Kaparasz.Web
 {
@@ -51,6 +55,11 @@ namespace Kaparasz.Web
                 options.Authority = "https://securetoken.google.com/kaparasz-6742b";
             });
 
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.EventsType = typeof(CookieValidationMiddleware);
+            });
+
             // Add memory cache
             services.AddMemoryCache();
             
@@ -64,7 +73,23 @@ namespace Kaparasz.Web
                 return new FirebaseAuthProvider(new FirebaseConfig("AIzaSyAcyaI48Vo7P3r8thKttsdUYl_bsfpG-g4"));
             });
 
-            
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromFile("Properties/kaparasz-6742b-firebase-adminsdk-dpgvn-55702ca3fa.json"),
+            });
+
+            services.AddScoped<CookieValidationMiddleware>();
+
+            //services.AddScoped(s =>
+            //{
+            //    FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance
+            //    return FirebaseApp.Create(new AppOptions()
+            //    {
+            //        Credential = GoogleCredential.FromFile("Properties/kaparasz-6742b-firebase-adminsdk-dpgvn-55702ca3fa.json"),
+            //    });
+            //});
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

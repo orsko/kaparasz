@@ -1,21 +1,18 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Firebase.Auth;
-using Kaparasz.Web.Controllers;
 using Kaparasz.Web.ViewModels.Auth;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kaparasz.Web.Controllers
 {
     public class AuthController : BaseController
     {
-        public class ApplicationUser
-        {
-
-        };
-
         private readonly IFirebaseAuthProvider firebaseAuthProvider;
 
         public AuthController(
@@ -25,6 +22,7 @@ namespace Kaparasz.Web.Controllers
         }
 
         // GET: /<controller>/
+        [Authorize(Roles = "Administrator")]
         public IActionResult Index()
         {
             return View();
@@ -44,9 +42,16 @@ namespace Kaparasz.Web.Controllers
             {
                 var auth = await firebaseAuthProvider.SignInWithEmailAndPasswordAsync(login.Email, login.Password);
 
-                // TODO: betenni a tokent, hogy használja auth.FirebaseToken
+                var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
 
-                return RedirectToAction("Home", "Index");
+                identity.AddClaim(new Claim("Firebase-Token", auth.FirebaseToken));
+                identity.AddClaim(new Claim(ClaimTypes.Role, "Administrator"));
+
+                var claimsPrincipal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync(claimsPrincipal);
+
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
@@ -56,29 +61,12 @@ namespace Kaparasz.Web.Controllers
 
         }
 
-        /*
-        private FirebaseAuthProvider _authProvider;
-        private SignInManager<ApplicationUser> _signInManager;
-
-        public AuthController()
-        {
-            this._authProvider = new FirebaseAuthProvider(new FirebaseConfig("AIzaSyAcyaI48Vo7P3r8thKttsdUYl_bsfpG-g4"));
-        }
-
+        // POST: /<controller>/Logout
         [HttpPost]
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> LogoutAsync()
         {
-            _authProvider.si
-            await _signInManager.SignOutAsync();
+            await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
-        }
-        */
     }
 }
