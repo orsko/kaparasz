@@ -31,6 +31,8 @@
     <Folder Include="Views\Shared\" />
     <Folder Include="ViewModels\Auth\" />
     <Folder Include="Middlewares\" />
+    <Folder Include="ApiControllers\" />
+    <Folder Include="DTOs\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Pages\Error.cshtml.cs" />
