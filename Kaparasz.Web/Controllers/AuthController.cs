@@ -44,7 +44,7 @@ namespace Kaparasz.Web.Controllers
             {
                 var auth = await firebaseAuthProvider.SignInWithEmailAndPasswordAsync(login.Email, login.Password);
 
-                // TODO: betenni a tokent, hogy használja
+                // TODO: betenni a tokent, hogy használja auth.FirebaseToken
 
                 return RedirectToAction("Home", "Index");
             }
